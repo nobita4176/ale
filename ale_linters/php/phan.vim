@@ -22,9 +22,10 @@ function! ale_linters#php#phan#GetCommand(buffer) abort
         let l:args = '-l '
         \   . ' %s'
     else
-        let l:args = '-y '
-        \   . ale#Var(a:buffer, 'php_phan_minimum_severity')
-        \   . ' %s'
+        let l:args = ''
+        \   . '--no-progress-bar '
+        \   . '-y ' . ale#Var(a:buffer, 'php_phan_minimum_severity') . ' '
+        \   . '%s'
     endif
 
     let l:executable = ale_linters#php#phan#GetExecutable(a:buffer)
