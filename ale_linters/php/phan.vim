@@ -24,6 +24,7 @@ function! ale_linters#php#phan#GetCommand(buffer) abort
     else
         let l:args = ''
         \   . '--no-progress-bar '
+        \   . '--output-mode=json '
         \   . '-y ' . ale#Var(a:buffer, 'php_phan_minimum_severity') . ' '
         \   . '%s'
     endif
@@ -34,6 +35,14 @@ function! ale_linters#php#phan#GetCommand(buffer) abort
 endfunction
 
 function! ale_linters#php#phan#Handle(buffer, lines) abort
+    if ale#Var(a:buffer, 'php_phan_use_client') == 1
+        return ale_linters#php#phan#HandleText(a:buffer, a:lines)
+    else
+        return ale_linters#php#phan#HandleJSON(a:buffer, a:lines)
+    endif
+endfunction
+
+function! ale_linters#php#phan#HandleText(buffer, lines) abort
     " Matches against lines like the following:
     if ale#Var(a:buffer, 'php_phan_use_client') == 1
         " Phan error: ERRORTYPE: message in /path/to/some-filename.php on line nnn
@@ -63,6 +72,72 @@ function! ale_linters#php#phan#Handle(buffer, lines) abort
         endif
 
         call add(l:output, l:dict)
+    endfor
+
+    return l:output
+endfunction
+
+function! ale_linters#php#phan#HandleJSON(buffer, lines) abort
+    return s:parseJSON(a:buffer, a:lines)
+endfunction
+
+function! s:parseJSON(buffer, lines) abort
+    let l:errors = []
+
+    for l:line in a:lines
+        try
+            let l:errors = extend(l:errors, json_decode(l:line))
+        catch
+        endtry
+    endfor
+
+    if empty(l:errors)
+        return []
+    endif
+
+    let l:output = []
+
+    for l:error in l:errors
+        let l:obj = ({
+        \   'type': 'W',
+        \})
+
+        if has_key(l:error, 'description')
+            let l:description = get(l:error, 'description', '')
+            " IssueCategory IssueType Message goes like this.
+            let l:matches = matchlist(l:description, '\(\w\+\) \(\w\+\) \(.*\)')
+            if empty(l:matches)
+                let l:obj.text = l:description
+            else
+                let l:obj.text = l:matches[3]
+            endif
+
+            if has_key(l:error, 'suggestion')
+                let l:obj.text = l:obj.text . ' (' . get(l:error, 'suggestion', '') . ')'
+            endif
+        endif
+
+        if get(l:error, 'severity', 5) == 0
+            let l:obj.type = 'I'
+        elseif get(l:error, 'severity', 5) > 5
+            let l:obj.type = 'E'
+        endif
+
+        if has_key(l:error, 'location')
+            let l:location = get(l:error, 'location')
+
+            if has_key(l:location, 'lines')
+                let l:lines = get(l:location, 'lines')
+                let l:obj.lnum = get(l:lines, 'begin', 0)
+                let l:obj.end_lnum = get(l:lines, 'end', 0)
+            endif
+
+            if has_key(l:location, 'path')
+                let l:obj.filename = get(l:location, 'path', '')
+            endif
+        endif
+
+        call add(l:output, l:obj)
     endfor
 
     return l:output
