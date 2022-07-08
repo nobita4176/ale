@@ -417,6 +417,7 @@ Notes:
   * `phpcs`
   * `phpmd`
   * `phpstan`
+  * `pint`
   * `psalm`!!
   * `tlint`
 * PO
@@ -466,6 +467,7 @@ Notes:
   * `pycodestyle`
   * `pydocstyle`
   * `pyflakes`
+  * `pyflyby`
   * `pylama`!!
   * `pylint`!!
   * `pylsp`

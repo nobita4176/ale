@@ -3071,6 +3071,7 @@ documented in additional help files.
     psalm.................................|ale-php-psalm|
     php-cs-fixer..........................|ale-php-php-cs-fixer|
     php...................................|ale-php-php|
+    pint..................................|ale-php-pint|
     tlint.................................|ale-php-tlint|
     intelephense..........................|ale-php-intelephense|
   po......................................|ale-po-options|
@@ -3117,6 +3118,7 @@ documented in additional help files.
     pycodestyle...........................|ale-python-pycodestyle|
     pydocstyle............................|ale-python-pydocstyle|
     pyflakes..............................|ale-python-pyflakes|
+    pyflyby...............................|ale-python-pyflyby|
     pylama................................|ale-python-pylama|
     pylint................................|ale-python-pylint|
     pylsp.................................|ale-python-pylsp|

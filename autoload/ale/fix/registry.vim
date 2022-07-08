@@ -136,6 +136,11 @@ let s:default_registry = {
 \       'description': 'Apply prettier-eslint to a file.',
 \       'aliases': ['prettier-eslint'],
 \   },
+\   'pyflyby': {
+\       'function': 'ale#fixers#pyflyby#Fix',
+\       'suggested_filetypes': ['python'],
+\       'description': 'Tidy Python imports with pyflyby.',
+\   },
 \   'importjs': {
 \       'function': 'ale#fixers#importjs#Fix',
 \       'suggested_filetypes': ['javascript'],
@@ -225,6 +230,11 @@ let s:default_registry = {
 \       'function': 'ale#fixers#php_cs_fixer#Fix',
 \       'suggested_filetypes': ['php'],
 \       'description': 'Fix PHP files with php-cs-fixer.',
+\   },
+\   'pint': {
+\       'function': 'ale#fixers#pint#Fix',
+\       'suggested_filetypes': ['php'],
+\       'description': 'Fix PHP files with Laravel Pint.',
 \   },
 \   'astyle': {
 \       'function': 'ale#fixers#astyle#Fix',
